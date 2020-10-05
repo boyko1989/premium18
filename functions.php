@@ -78,7 +78,7 @@ function cats_id($array, $id) {
 }
 
 # Получение товаров
-function get_products($ids = false) {
+function get_products($ids) {
     global $connection;
     if ($ids) {
         $query ="SELECT * FROM products WHERE parent IN($ids) ORDER BY title";
