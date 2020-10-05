@@ -19,6 +19,14 @@ if (isset($_GET['category'])) {
     } else {
         $breadcrumbs = "Каталог";
     }
-}
 
+    //ID дочерних категорий
+    $ids = cats_id($categories, $id);
+    $ids = !$ids ? $id : rtrim($ids, ",");
+
+    if($ids) $products = get_products($ids);
+		else $products = null;
+    } else {
+        $products = get_products();
+    }
 ?>

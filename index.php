@@ -18,8 +18,15 @@
 		<div class="content">
 			<p><?=$breadcrumbs;?></p>
 			<br>
-			<hr>
-			<?php print_arr($categories) ?>
+            <hr>
+            <?php if($products):?>
+                <hr>
+                    <?php foreach($products as $product): ?>
+                        <a href="?product=<?=$product['id']?>"><?=$product['title']?></a><br>
+                    <?php endforeach; ?>
+            <?php else: ?>
+                <p>Здесь товаров нет!</p>
+            <?php endif; ?>
 		</div>
     </div>
     <script src="js/jquery-1.9.0.min.js"></script>
