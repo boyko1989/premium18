@@ -1,13 +1,4 @@
-<?php
-
-require_once 'config.php';
-require_once 'functions.php';
-
-$categories = get_cat();
-$categories_tree = map_tree($categories);
-$categories_menu = categories_to_string($categories_tree);
-
-?>
+<?php require_once 'catalog.php'; ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -17,13 +8,19 @@ $categories_menu = categories_to_string($categories_tree);
     <title>Главная</title>
 </head>
 <body>
-        <a href="/catalog/">Главная</a>
+    <a href="/catalog/">Главная</a>
     <div class="wrapper">
-        <ul class="category">
-            <?php echo $categories_menu ?>
-        </ul>
-        <div class="content">
-        </div>
+    <div class="sidebar">
+			<ul class="category">
+				<?php echo $categories_menu ?>
+			</ul>
+		</div>
+		<div class="content">
+			<p><?=$breadcrumbs;?></p>
+			<br>
+			<hr>
+			<?php print_arr($categories) ?>
+		</div>
     </div>
     <script src="js/jquery-1.9.0.min.js"></script>
 	<script src="js/jquery.accordion.js"></script>
