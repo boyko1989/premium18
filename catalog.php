@@ -23,6 +23,37 @@ $categories_menu = categories_to_string($categories_tree);
     $ids = cats_id($categories, $id);
     $ids = !$ids ? $id : rtrim($ids, ",");
 
-    $products = get_products($ids);
+    /*==================Пагинация==================*/
+    
+    //количество товаров на страницу
+    $perpage = 5;
+    
+    //общее количество товаров
+    $count_goods = count_goods($ids);
+
+    //необходимое количество страниц
+    $count_pages = ceil($count_goods / $perpage);
+    //минимум одна страница
+    if(!$count_pages) $count_pages = 1;
+    
+    //получение текущей страницы
+    if (isset($_GET['page'])) {
+        $page = (int)$_GET['page'];
+        if ($page < 1) $page = 1;
+    } else {
+        $page = 1;
+    }
+
+    //если запрошенная страница больше максимальной
+    if($page > $count_pages) $page = $count_pages;
+    
+    //начальная позиция для запроса
+    $start_pos = ($page - 1) * $perpage;
+
+    $pagination = pagination($page, $count_pages);
+
+    /*==================Пагинация==================*/
+
+    $products = get_products($ids, $start_pos, $perpage);
     
 ?>

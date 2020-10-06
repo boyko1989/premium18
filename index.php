@@ -20,10 +20,20 @@
 			<br>
             <hr>
             <?php if($products):?>
+
+                <?php if ($count_pages > 1):?>
+                    <div class="pagination"><?=$pagination?></div>
+                <?php endif;?>
+
                 <hr>
                     <?php foreach($products as $product): ?>
                         <a href="?product=<?=$product['id']?>"><?=$product['title']?></a><br>
                     <?php endforeach; ?>
+
+                <?php if ($count_pages > 1):?>
+                    <div class="pagination"><?=$pagination?></div>
+                <?php endif;?>
+                
             <?php else: ?>
                 <p>Здесь товаров нет!</p>
             <?php endif; ?>

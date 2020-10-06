@@ -78,12 +78,12 @@ function cats_id($array, $id) {
 }
 
 # Получение товаров
-function get_products($ids) {
+function get_products($ids, $start_pos, $perpage) {
     global $connection;
     if ($ids) {
-        $query ="SELECT * FROM products WHERE parent IN($ids) ORDER BY title";
+        $query ="SELECT * FROM products WHERE parent IN($ids) ORDER BY title LIMIT $start_pos, $perpage";
     } else {
-        $query ="SELECT * FROM products  ORDER BY title";
+        $query ="SELECT * FROM products  ORDER BY title LIMIT $start_pos, $perpage";
     }
     $res = mysqli_query($connection, $query);
     $products = array();
@@ -92,4 +92,67 @@ function get_products($ids) {
     }
     return $products;
 }
+
+# Количество товаров
+function count_goods($ids){
+    global $connection;
+    if (!$ids) {
+        $query = "SELECT COUNT(*) FROM products";
+    } else {
+        $query = "SELECT COUNT(*) FROM products WHERE parent IN($ids)";
+    }
+    $res = mysqli_query($connection, $query);
+    $count_goods = mysqli_fetch_row($res);
+    return $count_goods[0];
+}
+
+# Постраничная навигация
+function pagination($page, $count_pages) {
+    // << < 3 4 5 6 7 > >>
+    // $back - ссылка назад
+    // $forward - ссылка вперёд
+    // $startpage - ссылка в начало
+    // $endpage - ссылка в конец
+    // $page2left - вторая страница слева
+    // $page1left - первая страница сдева
+    // $page2right - вторая страница справа
+    // $page1right - первая страница справа
+
+    $uri = "?";
+
+    //если есть параметры в адресной строке
+    if ($_SERVER['QUERY_STRING']) {
+        foreach ($_GET as $key => $value) {
+            if ($key != 'page') $uri .= "{$key}=$value&amp;";
+        }
+    }
+
+    if ($page > 1) {
+        $back = "<a class='nav-link' href='{$uri}page=".($page - 1)."'>&lt;</a>";
+    }
+    if ($page < $count_pages) {
+        $forward = "<a class='nav-link' href='{$uri}page=".($page + 1)."'>&gt;</a>";
+    }
+    if ($page > 3) {
+        $startpage = "<a class='nav-link' href='{$uri}page=1'>&lt;&lt;</a>";
+    }
+    if ($page < ($count_pages - 2)) {
+        $endpage = "<a class='nav-link' href='{$uri}page={$count_pages}'>&gt;&gt;</a>";
+    }
+    if ($page - 2 > 0) {
+        $page2left = "<a class='nav-link' href='{$uri}page=".($page-2)."'>" .($page-2). "</a>";
+    }
+    if( $page - 1 > 0 ){
+		$page1left = "<a class='nav-link' href='{$uri}page=" .($page-1). "'>" .($page-1). "</a>";
+	}
+	if( $page + 1 <= $count_pages ){
+		$page1right = "<a class='nav-link' href='{$uri}page=" .($page+1). "'>" .($page+1). "</a>";
+	}
+	if( $page + 2 <= $count_pages ){
+		$page2right = "<a class='nav-link' href='{$uri}page=" .($page+2). "'>" .($page+2). "</a>";
+	}
+
+    return $startpage." ".$back." ".$page2left." ".$page1left." ".'<a class="nav-active">'.$page.'</a>'." ".$page1right." ".$page2right." ".$forward." ".$endpage;
+}
+
 ?>
