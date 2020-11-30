@@ -1,52 +1,30 @@
-<?php require_once 'catalog.php'; ?>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Главная</title>
-</head>
-<body>
-    <a href="/catalog/">Главная</a>
-    <div class="wrapper">
-    <div class="sidebar">
-			<ul class="category">
-				<?php echo $categories_menu ?>
-			</ul>
-		</div>
-		<div class="content">
-			<p><?=$breadcrumbs;?></p>
-			<br>
-            <hr>
-            <?php if($products):?>
+<?php
+error_reporting(E_ALL);
+define("CATALOG", TRUE);
 
-                <?php if ($count_pages > 1):?>
-                    <div class="pagination"><?=$pagination?></div>
-                <?php endif;?>
+$routes = array(
+	array('url' => '#^$|^\?#', 'view' => 'category'),
+	array('url' => '#^product/(?P<product_alias>[a-z0-9-]+)#i', 'view' => 'product'),
+	array('url' => '#^category/(?P<id>\d+)#i', 'view' => 'category')
+);
 
-                <hr>
-                    <?php foreach($products as $product): ?>
-                        <a href="?product=<?=$product['id']?>"><?=$product['title']?></a><br>
-                    <?php endforeach; ?>
+// $url = str_replace('/catalog/', '', $_SERVER['REQUEST_URI']);
+$url = ltrim($_SERVER['REQUEST_URI'], '/');
 
-                <?php if ($count_pages > 1):?>
-                    <div class="pagination"><?=$pagination?></div>
-                <?php endif;?>
-                
-            <?php else: ?>
-                <p>Здесь товаров нет!</p>
-            <?php endif; ?>
-		</div>
-    </div>
-    <script src="js/jquery-1.9.0.min.js"></script>
-	<script src="js/jquery.accordion.js"></script>
-	<script src="js/jquery.cookie.js"></script>
-	<script>
-		$(document).ready(function(){
-			$(".category").dcAccordion();
-		});
-	</script>
+foreach ($routes as $route) {
+	if( preg_match($route['url'], $url, $match) ){
+		$view = $route['view'];
+		break;
+	}
+}
 
-</body>
-</html>
+if( empty($match) ){
+	include 'views/404.php';
+	exit;
+}
+
+extract($match);
+// $id - ID категории
+// $product_alias - alias продукта
+// $view - вид для подключения
+include "controllers/{$view}_controller.php";
