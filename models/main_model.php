@@ -35,7 +35,6 @@ function map_tree($dataset) {
             $dataset[$node['parent']]['childs'][$id] = &$node;
 		}
 	}
-
 	return $tree;
 }
 
